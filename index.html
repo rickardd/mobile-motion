@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mobile Motion</title>
+</head>
+
+<body>
+    <canvas id="canvas" style="border: 1px dashed #ccc"></canvas>
+    <script>
+        const canvas = document.getElementById("canvas");
+        const context = canvas.getContext("2d");
+
+        canvas.width = 300;
+        canvas.height = 500;
+
+        let gravityX = 0;
+        let gravityY = 0;
+        let gravityZ = 0;
+
+        let fooX = 0;
+        let fooY = 0;
+        let fooZ = 0;
+
+        let alpha = 0;
+        let beta = 0;
+        let gamma = 0;
+
+        const handleMotionEvent = event => {
+            gravityX = event.accelerationIncludingGravity.x;
+            gravityY = event.accelerationIncludingGravity.y;
+            gravityZ = event.accelerationIncludingGravity.z;
+
+            fooX = event.acceleration.x;
+            fooY = event.acceleration.y;
+            fooZ = event.acceleration.z;
+
+            alpha = rotationRate.alpha;
+            beta = rotationRate.beta;
+            gamma = rotationRate.gamma;
+
+            debugger;
+        };
+
+        const drawTerminal = () => {
+            context.fillStyle = "#777";
+            context.font = "12px sans-serif";
+
+            context.fillText(`gravityX: ${gravityX}`, 10, 10);
+            context.fillText(`gravityY: ${gravityY}`, 10, 25);
+            context.fillText(`gravityZ: ${gravityZ}`, 10, 40);
+
+            context.fillText(`fooX: ${fooX}`, 10, 60);
+            context.fillText(`fooY: ${fooY}`, 10, 75);
+            context.fillText(`fooZ: ${fooZ}`, 10, 90);
+
+            context.fillText(`alpha: ${alpha}`, 10, 110);
+            context.fillText(`beta: ${beta}`, 10, 125);
+            context.fillText(`gamma: ${gamma}`, 10, 140);
+        }
+
+        const drawScreen = () => {
+            context.fillStyle = "#efefef";
+            context.fillRect(10, 200, 280, 200);
+        }
+
+        const drawXBall = () => {
+            const gravityMax = 9.8
+            const screenMin = 30
+            const screenMax = 270
+            const distanceX = screenMax - screenMin
+            const percentX = gravityX / gravityMax
+            const positionX = screenMin + (distanceX / 2) + ((distanceX / 2) * percentX)
+            const positionY = 220
+
+            context.fillStyle = "red";
+            context.arc(positionX, positionY, 10, 0, 2 * Math.PI);
+            context.fill();
+        }
+
+        const draw = () => {
+            context.clearRect(0, 0, 500, 500);
+            context.beginPath();
+            drawTerminal()
+            drawScreen()
+            drawXBall()
+        };
+
+        setInterval(() => {
+            draw();
+        }, 500);
+
+        window.addEventListener("devicemotion", handleMotionEvent, true);
+    </script>
+</body>
+
+</html>
