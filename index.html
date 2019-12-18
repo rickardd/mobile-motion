@@ -78,6 +78,20 @@
             context.arc(positionX, positionY, 10, 0, 2 * Math.PI);
             context.fill();
         }
+        
+        const drawYBall = () => {
+            const gravityMax = 9.8
+            const screenMin = 210
+            const screenMax = 470
+            const distanceY = screenMax - screenMin
+            const percentY = gravityY / gravityMax
+            const positionY = screenMin + (distanceY / 2) + ((distanceY / 2) * percentY)
+            const positionY = 220
+
+            context.fillStyle = "green";
+            context.arc(positionX, positionY, 10, 0, 2 * Math.PI);
+            context.fill();
+        }
 
         const draw = () => {
             context.clearRect(0, 0, 500, 500);
