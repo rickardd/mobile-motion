@@ -1,134 +1,135 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mobile Motion</title>
-  </head>
 
-  <body>
-    <canvas id="canvas" style="border: 1px dashed #ccc"></canvas>
-    <script>
-      const canvas = document.getElementById("canvas");
-      const context = canvas.getContext("2d");
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobile Motion</title>
+</head>
 
-      const width = 300;
-      const height = 300;
+<body>
+  <canvas id="canvas" style="border: 1px dashed #ccc"></canvas>
+  <script>
+    const canvas = document.getElementById("canvas");
+    const context = canvas.getContext("2d");
 
-      const frameX = 10;
-      const frameY = 10;
-      const frameWidth = width - frameX * 2;
-      const frameHeight = height - frameY * 2;
+    const width = 300;
+    const height = 300;
 
-      canvas.width = width;
-      canvas.height = height;
+    const frameX = 10;
+    const frameY = 10;
+    const frameWidth = width - frameX * 2;
+    const frameHeight = height - frameY * 2;
 
-      let gravityX = 0;
-      let gravityY = 0;
-      let gravityZ = 0;
+    canvas.width = width;
+    canvas.height = height;
 
-      const gravityNeutral = 9.8;
+    let gravityX = 0;
+    let gravityY = 0;
+    let gravityZ = 0;
 
-      const ballSize = 0;
+    const gravityNeutral = 9.8;
 
-      const handleMotionEvent = event => {
-        gravityX = event.accelerationIncludingGravity.x;
-        gravityY = event.accelerationIncludingGravity.y;
-        gravityZ = event.accelerationIncludingGravity.z;
-      };
+    const ballSize = 24;
 
-      const drawScreen = () => {
-        context.fillStyle = "black";
-        context.fillRect(0, 0, width, height);
-      };
+    const handleMotionEvent = event => {
+      gravityX = event.accelerationIncludingGravity.x;
+      gravityY = event.accelerationIncludingGravity.y;
+      gravityZ = event.accelerationIncludingGravity.z;
+    };
 
-      const drawFrame = () => {
-        context.strokeStyle = "white";
-        context.strokeRect(frameX, frameY, frameWidth, frameHeight);
-      };
+    const drawScreen = () => {
+      context.fillStyle = "black";
+      context.fillRect(0, 0, width, height);
+    };
 
-      const drawTerminal = () => {
-        context.fillStyle = "red";
-        context.font = "10px sans-serif";
+    const drawFrame = () => {
+      context.strokeStyle = "white";
+      context.strokeRect(frameX, frameY, frameWidth, frameHeight);
+    };
 
-        context.fillText(`gravityX: ${gravityX}`, frameX + 10, frameY + 10);
-        context.fillText(`gravityY: ${gravityY}`, frameX + 10, frameY + 25);
-        context.fillText(`gravityZ: ${gravityZ}`, frameX + 10, frameY + 40);
-      };
+    const drawTerminal = () => {
+      context.fillStyle = "red";
+      context.font = "10px sans-serif";
 
-      const getBallPositionX = () => {
-        const percentX = gravityX / gravityNeutral;
-        return frameX + frameWidth / 2 - (frameWidth / 2) * percentX + ballSize;
-      };
+      context.fillText(`gravityX: ${gravityX}`, frameX + 10, frameY + 10);
+      context.fillText(`gravityY: ${gravityY}`, frameX + 10, frameY + 25);
+      context.fillText(`gravityZ: ${gravityZ}`, frameX + 10, frameY + 40);
+    };
 
-      const moveBallPositionX = () => {
-        const framePosLeft = frameX;
-        const framePosRight = frameX + frameWidth + ballSize;
-        const ballX = getBallPositionX(ballSize);
+    const getBallX = () => {
+      const percentX = gravityX / gravityNeutral;
+      return frameX + frameWidth / 2 - (frameWidth / 2) * percentX + ballSize;
+    };
 
-        if (ballX < framePosLeft || ballX > framePosRight) {
-        }
-      };
+    const getValidBallX = (ballX) => {
+      const frameLeft = frameX;
+      const frameRight = frameX + frameWidth;
 
-      const drawBall = () => {
-        const screenMin = 30;
-        const screenMax = 270;
-        const distanceX = screenMax - screenMin;
-        const percentX = gravityX / gravityNeutral;
-        const positionX =
-          screenMin + distanceX / 2 - (distanceX / 2) * percentX;
-        const positionY = 220;
+      if (ballX < frameLeft) return frameLeft
+      if (ballX + ballSize > frameRight) return frameRight - ballSize
 
-        context.fillStyle = "white";
-        context.arc(positionX, positionY, ballSize, 0, 2 * Math.PI);
-        context.fill();
-      };
+      return ballX
+    };
 
-      const drawXBall = () => {
-        const gravityMax = 9.8;
-        const screenMin = 30;
-        const screenMax = 270;
-        const distanceX = screenMax - screenMin;
-        const percentX = gravityX / gravityMax;
-        const positionX =
-          screenMin + distanceX / 2 - (distanceX / 2) * percentX;
-        const positionY = 220;
+    const drawBall = () => {
+      const positionY = 30
+      const ballX = getBallX(ballSize);
+      const newBallX = getValidBallX(ballX)
 
-        context.fillStyle = "red";
-        context.arc(positionX, positionY, 10, 0, 2 * Math.PI);
-        context.fill();
-      };
+      context.fillStyle = "white";
+      context.arc(newBallX, positionY, ballSize, 0, 2 * Math.PI);
+      context.fill();
 
-      const drawYBall = () => {
-        const gravityMax = 9.8;
-        const screenMin = 200 + 20; // vertical
-        const screenMax = 200 + 200 - 20; // vertical
-        const distanceY = screenMax - screenMin;
-        const percentY = gravityY / gravityMax;
-        const positionY =
-          screenMin + distanceY / 2 + (distanceY / 2) * percentY;
-        const positionX = screenMax - screenMin;
+    };
 
-        context.fillStyle = "green";
-        context.arc(positionX, positionY, 10, 0, 2 * Math.PI);
-        context.fill();
-      };
+    const drawXBall = () => {
+      const gravityMax = 9.8;
+      const screenMin = 30;
+      const screenMax = 270;
+      const distanceX = screenMax - screenMin;
+      const percentX = gravityX / gravityMax;
+      const positionX =
+        screenMin + distanceX / 2 - (distanceX / 2) * percentX;
+      const positionY = 220;
 
-      const draw = () => {
-        context.clearRect(0, 0, width, height);
-        context.beginPath();
-        drawScreen();
-        drawFrame();
-        drawTerminal();
-        drawBall();
-        // drawXBall();
-        // drawYBall();
-      };
 
-      setInterval(() => {
-        draw();
-      }, 500);
+      context.fillStyle = "red";
+      context.arc(positionX, positionY, 10, 0, 2 * Math.PI);
+      context.fill();
+    };
 
-      window.addEventListener("devicemotion", handleMotionEvent, true);
-    </script>
-  </body>
+    const drawYBall = () => {
+      const gravityMax = 9.8;
+      const screenMin = 200 + 20; // vertical
+      const screenMax = 200 + 200 - 20; // vertical
+      const distanceY = screenMax - screenMin;
+      const percentY = gravityY / gravityMax;
+      const positionY =
+        screenMin + distanceY / 2 + (distanceY / 2) * percentY;
+      const positionX = screenMax - screenMin;
+
+      context.fillStyle = "green";
+      context.arc(positionX, positionY, 10, 0, 2 * Math.PI);
+      context.fill();
+    };
+
+    const draw = () => {
+      context.clearRect(0, 0, width, height);
+      context.beginPath();
+      drawScreen();
+      drawFrame();
+      drawTerminal();
+      drawBall();
+      // drawXBall();
+      // drawYBall();
+    };
+
+    setInterval(() => {
+      draw();
+    }, 500);
+
+    window.addEventListener("devicemotion", handleMotionEvent, true);
+  </script>
+</body>
+
 </html>
